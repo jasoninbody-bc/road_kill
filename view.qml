@@ -267,12 +267,17 @@ ApplicationWindow {
                             text: "Run Left Motor "
                             highlighted: true
                             Material.accent: Material.primary
+                            onClicked: {
+                                    pythonBridge.vcuRunLeftMotor()
+                            }
                         }
                         Slider {
                             Layout.preferredWidth: 150
                             anchors.left: parent.left
                             Material.accent: Material.primary
                             value: 0.5
+                            property bool updateValueWhileDragging: false
+                            onMoved: pythonBridge.vcuLeftMotorValue = value
                         }
                     }
                     RowLayout {
@@ -281,12 +286,17 @@ ApplicationWindow {
                             text: "Run Right Motor"
                             highlighted: true
                             Material.accent: Material.primary
+                            onClicked: {
+                                    pythonBridge.vcuRunRightMotor()
+                            }
                         }
                         Slider {
                             Layout.preferredWidth: 150
                             anchors.left: parent.left
                             Material.accent: Material.primary
                             value: 0.5
+                            property bool updateValueWhileDragging: false
+                            onMoved: pythonBridge.vcuRightMotorValue = value
                         }
                     }
                     RowLayout {
@@ -295,12 +305,17 @@ ApplicationWindow {
                             text: "Sweeper Motor"
                             highlighted: true
                             Material.accent: Material.primary
+                            onClicked: {
+                                    pythonBridge.vcuRunSweeper()
+                            }
                         }
                         Slider {
                             Layout.preferredWidth: 150
                             anchors.left: parent.left
                             Material.accent: Material.primary
                             value: 0.5
+                            property bool updateValueWhileDragging: false
+                            onMoved: pythonBridge.vcuSweeperMotorValue = value
                         }
                     }
                     RowLayout {
@@ -312,6 +327,8 @@ ApplicationWindow {
                                 anchors.left: parent.left
                                 Material.accent: Material.primary
                                 value: 0.5
+                                property bool updateValueWhileDragging: false
+                                onMoved: pythonBridge.vcuActuatorValue = value
                             }
                         }
                     }
@@ -326,12 +343,21 @@ ApplicationWindow {
 
                                 RadioButton {
                                     text: "Off"
+                                    onClicked: {
+                                        pythonBridge.vcuVacuumOff()
+                                    }
                                 }
                                 RadioButton {
                                     text: "On"
+                                    onClicked: {
+                                        pythonBridge.vcuVacuumOn()
+                                    }
                                 }
                                 RadioButton {
                                     text: "Turbo"
+                                    onClicked: {
+                                        pythonBridge.vcuVacuumTurbo()
+                                    }
                                 }
                             }
                         }
@@ -348,6 +374,7 @@ ApplicationWindow {
                         Switch {
                             anchors.right: parent.right
                             checked: false
+                            onClicked: { pythonBridge.vcuEnableSensors(checked) }
                         }
                         Text { text: "Enable Sensors"; font.bold: true; color: 'white';anchors.left: parent.left}
                     }
@@ -357,7 +384,12 @@ ApplicationWindow {
                         ColumnLayout {
                             Text { text: "S1"; font.bold: true; color: 'white';Layout.alignment: Qt.AlignHCenter}
                             StatusIndicator {
+                                id: S1
                                 color: Material.Primary
+                                active: false
+                                function updateS1Data(status) {
+                                    S1.active = status
+                                }
                              }
                         }
                         ColumnLayout {
