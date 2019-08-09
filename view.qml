@@ -245,7 +245,6 @@ ApplicationWindow {
         height: parent.height
         width: 1200
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: logging.height
         currentIndex: bar.currentIndex
         Item {
             id: vcuTab
@@ -384,42 +383,43 @@ ApplicationWindow {
                         ColumnLayout {
                             Text { text: "S1"; font.bold: true; color: 'white';Layout.alignment: Qt.AlignHCenter}
                             StatusIndicator {
-                                id: S1
-                                color: Material.Primary
-                                active: false
-                                function updateS1Data(status) {
-                                    S1.active = status
-                                }
+                                color: '#FF3D00'
+                                active: pythonBridge.sensor_1
                              }
                         }
                         ColumnLayout {
                             Text { text: "S2"; font.bold: true; color: 'white';Layout.alignment: Qt.AlignHCenter}
                             StatusIndicator {
-                                color: Material.Primary
+                                color: '#FF3D00'
+                                active: pythonBridge.sensor_2
                              }
                         }
                         ColumnLayout {
                             Text { text: "S3"; font.bold: true; color: 'white';Layout.alignment: Qt.AlignHCenter}
                             StatusIndicator {
-                                color: Material.Primary
+                                color: '#FF3D00'
+                                active: pythonBridge.sensor_3
                              }
                         }
                         ColumnLayout {
                             Text { text: "S4"; font.bold: true; color: 'white';Layout.alignment: Qt.AlignHCenter}
                             StatusIndicator {
-                                color: Material.Primary
+                                color: '#FF3D00'
+                                active: pythonBridge.sensor_4
                              }
                         }
                         ColumnLayout {
                             Text { text: "S5"; font.bold: true; color: 'white';Layout.alignment: Qt.AlignHCenter}
                             StatusIndicator {
-                                color: Material.Primary
+                                color: '#FF3D00'
+                                active: pythonBridge.sensor_5
                              }
                         }
                         ColumnLayout {
                             Text { text: "S6"; font.bold: true; color: 'white';Layout.alignment: Qt.AlignHCenter}
                             StatusIndicator {
-                                color: Material.Primary
+                                color: '#FF3D00'
+                                active: pythonBridge.sensor_6
                              }
                         }
                     }
@@ -431,14 +431,16 @@ ApplicationWindow {
                             anchors.leftMargin: 60
                             Text { text: "Left"; font.bold: true; color: 'white';Layout.alignment: Qt.AlignHCenter}
                             StatusIndicator {
-                                color: Material.Primary
+                                color: '#FF3D00'
+                                active: pythonBridge.left_bumper
                              }
                         }
                         ColumnLayout {
                             anchors.right: parent.right
                             Text { text: "Right"; font.bold: true; color: 'white';Layout.alignment: Qt.AlignHCenter}
                             StatusIndicator {
-                                color: Material.Primary
+                                color: '#FF3D00'
+                                active: pythonBridge.right_bumper
                              }
                         }
                     }
@@ -447,7 +449,8 @@ ApplicationWindow {
                         Layout.alignment: Qt.AlignHCenter
                         StatusIndicator {
                             anchors.right: parent.right
-                            color: Material.Primary
+                            color: '#FF3D00'
+                            active: pythonBridge.e_stop
                         }
                         Text { text: "     E  Stop     "; font.bold: true; color: 'white';anchors.left: parent.left}
                     }
@@ -456,7 +459,8 @@ ApplicationWindow {
                         Layout.alignment: Qt.AlignHCenter
                         StatusIndicator {
                             anchors.right: parent.right
-                            color: Material.Primary
+                            color: '#FF3D00'
+                            active: pythonBridge.blue_button
                         }
                         Text { text: "Blue Button"; font.bold: true; color: 'white';anchors.left: parent.left}
                     }
@@ -475,11 +479,14 @@ ApplicationWindow {
                             text: "Connect"
                             highlighted: true
                             Material.accent: Material.primary
+                            onClicked: {
+                                    pythonBridge.vcuConnect()
+                            }
                         }
                         StatusIndicator {
                             anchors.right: parent.right
                             color: "green"
-                            active: true
+                            active: pythonBridge.connection_indicator
                         }
                     }
                     RowLayout {
@@ -490,9 +497,12 @@ ApplicationWindow {
                             text: "Get Version"
                             highlighted: true
                             Material.accent: Material.primary
+                            onClicked: {
+                                    pythonBridge.vcuGetVersion()
+                            }
                         }
                         Text {
-                            text: "Version";
+                            text: pythonBridge.version;
                             font.bold: true;
                             color: 'white';
                             anchors.right: parent.right
@@ -508,8 +518,10 @@ ApplicationWindow {
                             text: "Autorun Test"
                             highlighted: true
                             Material.accent: Material.primary
+                            onClicked: {
+                                    pythonBridge.vcuAutoRunTest()
+                            }
                         }
-
                     }
                     RowLayout {
                         spacing: 80
@@ -521,26 +533,12 @@ ApplicationWindow {
                             Material.accent: Material.primary
                         }
                     }
-                }
-            }
-            RowLayout {
-                spacing: 80
-                anchors.bottomMargin: 250
-                anchors.bottom: parent.bottom
-                anchors.horizontalCenter: parent.horizontalCenter
-                TextField {
-                    Layout.preferredWidth: 900
-                    anchors.left: parent.left
-                    anchors.leftMargin: 20
-                    placeholderText: qsTr("Enter SSH Command")
-                }
-                Button {
-                    anchors.right: parent.right
-                    anchors.rightMargin: 20
-                    id: sshbutton
-                    text: "Execute Command"
-                    highlighted: true
-                    Material.accent: Material.primary
+                    RowLayout {
+                        Text {text: " "}
+                    }
+                    RowLayout {
+                        Text {text: " "}
+                    }
                 }
             }
         }
@@ -823,12 +821,14 @@ ApplicationWindow {
                 Layout.preferredWidth: parent.width
                 anchors.margins: 100
                 background: Rectangle { color: "transparent"; border.color: 'white'; radius: 6}
-
+                position: 1
                 TextArea {
+                    id: log
                     background: null
                     readOnly: true
                     selectByMouse: true
-                    text: "TextArea\n...\n...\n...\n...\n...\n...\n\n...\n...\n...\n...\n...\n...\n\n...\n...\n...\n...\n...\n...\n\n...\n...\n...\n...\n...\n...\n\n...\n...\n...\n...\n...\n...\n\n...\n...\n...\n...\n...\n...\n\n...\n...\n...\n...\n...\n...\n\n...\n...\n...\n...\n...\n...\n"
+                    text: pythonBridge.log_box
+
                 }
              }
         }
